@@ -1,10 +1,26 @@
 package com.cdq.app.processor.task.service;
 
+import com.cdq.app.processor.task.model.Task;
+import com.cdq.app.processor.task.model.TaskRepresentation;
+import com.cdq.app.processor.task.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
 public class TaskService {
 
-    public static int bestMatch(String input, String pattern) {
+    private final TaskRepository repository;
+
+    public List<Task> getTasks() {
+        return repository.getAllTasks();
+    }
+
+    public TaskRepresentation bestMatch(String input, String pattern) {
         int bestMatch = -1;
-        int bestDiff = pattern.length();
+        int diffIndx = pattern.length();
 
         for (int i = 0; i <= input.length() - pattern.length(); i++) {
             int diff = 0;
@@ -14,8 +30,8 @@ public class TaskService {
                 }
             }
 
-            if (diff < bestDiff) {
-                bestDiff = diff;
+            if (diff < diffIndx) {
+                diffIndx = diff;
                 bestMatch = i;
             }
         }
@@ -26,8 +42,7 @@ public class TaskService {
                 typosCount++;
             }
         }
-        System.out.println("Typos count: " + typosCount);
-        return bestMatch;
+        return new TaskRepresentation(bestMatch, typosCount);
     }
 
 
